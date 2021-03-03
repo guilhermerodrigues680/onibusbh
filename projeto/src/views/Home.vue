@@ -11,6 +11,8 @@ import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Home',
+  title: 'Home',
+  
   components: {
     HelloWorld
   }
