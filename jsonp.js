@@ -1,5 +1,6 @@
 let jsonpID = Math.floor(Math.random() * 100) + 1;
 
+// https://blog.logrocket.com/jsonp-demystified-what-it-is-and-why-it-exists/
 function jsonp(url, timeout = 7500) {
   const head = document.querySelector('head');
   jsonpID += 1;
