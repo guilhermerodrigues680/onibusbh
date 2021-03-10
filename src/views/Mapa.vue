@@ -9,6 +9,7 @@
           :options="mapOptions"
           @update:center="centerUpdate"
           @update:zoom="zoomUpdate"
+          ref="leafletMap"
         >
           <l-tile-layer
             :url="url"
@@ -113,8 +114,10 @@ export default {
   created: function() {
     this.currentCenter = this.center;
     this.loadParadasProximas();
-    console.log(L)
-    console.log(this.center)
+    // console.log(L)
+    // console.log(this.center)
+    console.log(this)
+    setTimeout(() => this.$refs.leafletMap.mapObject.setView(this.currentCenter, 16), 1250)
   },
 
   methods: {

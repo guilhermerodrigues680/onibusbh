@@ -2,7 +2,6 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      class="z-index1010"
       v-model="drawer"
       app
     >
@@ -15,23 +14,27 @@
       dark
       elevate-on-scroll
       >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <!-- <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon> -->
 
-      <v-toolbar-title>Debug</v-toolbar-title>
+      <v-toolbar-title>Ônibus BH</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+      
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
 
     <v-main>
       <router-view></router-view>
     </v-main>
 
-    <v-footer absolute color="primary" dark app>
+    <!-- <v-footer absolute color="primary" dark app>
       <v-col
         class="text-center"
         cols="12"
       >
         <strong>Debug</strong> - {{ new Date().getFullYear() }}
       </v-col>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
@@ -46,13 +49,17 @@ export default {
   },
   
   data: () => ({
-    drawer: null
+    drawer: false
   }),
 };
 </script>
 
-<style scoped>
-.z-index1010 {
-  z-index: 1010;  
+<style>
+html {
+  overflow-y: auto
+}
+
+.v-navigation-drawer {
+  z-index: 1090 !important;
 }
 </style>
