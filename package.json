@@ -18,6 +18,7 @@
     "vuetify": "^2.4.0"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.5.23",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "^4.5.11",

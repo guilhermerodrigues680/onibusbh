@@ -2,6 +2,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      class="z-index1010"
       v-model="drawer"
       app
     >
@@ -20,9 +21,7 @@
     </v-app-bar>
 
     <v-main>
-      <v-container fluid class="ma-0 pa-0 fill-height">
-        <router-view></router-view>
-      </v-container>
+      <router-view></router-view>
     </v-main>
 
     <v-footer absolute color="primary" dark app>
@@ -51,3 +50,9 @@ export default {
   }),
 };
 </script>
+
+<style scoped>
+.z-index1010 {
+  z-index: 1010;  
+}
+</style>
