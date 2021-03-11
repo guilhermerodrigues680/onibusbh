@@ -74,9 +74,26 @@ export default {
         try {
           const apiRes = await services.getParadasProximas(center.lng, center.lat);
           const paradas = apiRes.paradas.map(p => ({ ...p, latLng: latLng(p.y, p.x) }))
-          this.paradasMarker.splice(0)
-          this.paradasMarker.push(...paradas)
-          resolve(apiRes.paradas)
+
+          // Cada parada é identificada pelo atributo 'cod'
+          // Remove as paradas que nao estao na resposta da api
+          const codsRes = paradas.map(p => p.cod)
+          const codsMarker = this.paradasMarker.map(p => p.cod)
+          for (const codMarker of codsMarker) {
+            if (!codsRes.includes(codMarker)) {
+              const idx = this.paradasMarker.findIndex(p => p.cod === codMarker)
+              this.paradasMarker.splice(idx, 1)
+            }
+          }
+
+          // Mantem as paradas que já estao no array
+          // Inclui somente as paradas que não estavam no array
+          const paradasNovas = paradas.filter(p => !codsMarker.includes(p.cod))
+          paradasNovas.forEach(p => {
+            this.paradasMarker.push(p)
+          });
+
+          resolve(paradas)
         } catch (error) {
           reject(error)
         }
@@ -84,6 +101,7 @@ export default {
     },
     zoomOrCenterUpdate(center, zoom) {
       return new Promise(async (resolve, reject) => {
+        // const oldCenter = this.currentCenterAndZoom.center
         this.currentCenterAndZoom.center = center !== null ? center : this.currentCenterAndZoom.center
         this.currentCenterAndZoom.zoom = zoom !== null ? zoom : this.currentCenterAndZoom.zoom
 
@@ -96,8 +114,25 @@ export default {
           return
         }
 
-        this.circleCenter.splice(0)
-        this.circleCenter.push(...[this.currentCenterAndZoom.center.lat, this.currentCenterAndZoom.center.lng])
+        // TODO: Checar se o centro mudou para enviar uma nova requisicao
+        // const p = p => JSON.parse(JSON.stringify(p))
+        // const round5 = (x) => Math.round(x * 1e5)/1e5;
+
+        // try {
+        //  console.debug(round5(oldCenter.lat), round5(center.lat))
+        //   console.debug(round5(oldCenter.lng), round5(center.lng)) 
+        // } catch(e) {
+        //   console.debug(e)
+        // }
+        
+
+        // // Caso seja uma atualiazacao de centro e/ou zoom
+        // if (oldCenter !== null && oldCenter.lat === center.lat && oldCenter.lng === center.lng) {
+        //   console.debug("Não mudou o centro")
+        //   return
+        // }
+
+        this.circleCenter.splice(0, this.circleCenter.length, ...[this.currentCenterAndZoom.center.lat, this.currentCenterAndZoom.center.lng])
 
         if (this.currentCenterAndZoom.zoom >= 14) {
           await this.loadParadasProximas(this.currentCenterAndZoom.center)
