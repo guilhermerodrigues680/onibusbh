@@ -5,7 +5,7 @@
   "private": true,
   "author": "Guilherme Rodrigues <guilhermerodrigues680@gmail.com> (https://github.com/guilhermerodrigues680)",
   "license": "GPL-3.0-or-later",
-  "homepage": "https://guilhermerodrigues680.github.io/onibusbh",
+  "homepage": "http://onibusbh.guilhermeonline.com.br",
   "repository": "github:guilhermerodrigues680/onibusbh",
   "scripts": {
     "serve": "vue-cli-service serve",

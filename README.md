@@ -4,7 +4,7 @@
 
 Aplicação Web para acompanhamento da previsão de chegada e itinerários dos ônibus de BH.
 
-[Acesse aqui o Ônibus BH](https://guilhermerodrigues680.github.io/onibusbh)
+[Acesse aqui o Ônibus BH](http://onibusbh.guilhermeonline.com.br/)
 
 ## Configuração do projeto 
 
@@ -38,6 +38,12 @@ npm run lint
 - [Vue CLI - Configuration Reference](https://cli.vuejs.org/config/).
 - [Vuetify - Material Design Framework](https://vuetifyjs.com/en/)
 - [Vue Leaflet](https://vue2-leaflet.netlify.app/)
+
+## Conteúdo HTTP
+
+A aplicação consome a **API do SIU Mobile** que é transmitida sobre HTTP, por esse motivo para a aplicação funcionar corretamente ela deve ser acessada com HTTP: `http://onibusbh.guilhermeonline.com.br` e não com HTTPS: `https://onibusbh.guilhermeonline.com.br`. O acesso da aplicação com HTTPS faz com o navegador bloquei as chamadas à API alegando **Conteúdo Misto**.
+
+HTTP não é considerado seguro para trafegar informações sensíveis, porém como esta aplicação não envia ou recebe informações sigilosas o uso do HTTP é aceitável.
 
 ## Versionamento
 
