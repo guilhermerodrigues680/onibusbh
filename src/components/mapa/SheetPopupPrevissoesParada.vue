@@ -103,8 +103,6 @@
 </template>
 
 <script>
-import services from "../../services/index";
-
 export default {
   name: "SheetPopupPrevissoesParada",
 
@@ -137,8 +135,7 @@ export default {
       return busColors[numColor]
     },
     loadItinerarioLinha: async function (codItinerario) {
-      const apiRes = await services.getItinerario(codItinerario)
-      const apiRes2 = await services.getVeiculosMapa(codItinerario)
+      this.$router.push({ name: 'MapaItinerario', params: { codItinerario } })
     },
   }
 

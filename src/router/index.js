@@ -27,6 +27,11 @@ const routes = [
     path: '/mapa',
     name: 'Mapa',
     component: () => import(/* webpackChunkName: "mapa" */ '../views/Mapa.vue')
+  },
+  {
+    path: '/mapa-itinerario/:codItinerario',
+    name: 'MapaItinerario',
+    component: () => import(/* webpackChunkName: "MapaItinerario" */ '../views/MapaItinerario.vue')
   }
 ]
 

@@ -65,8 +65,13 @@ export default {
   },
 
   created: async function() {
-    await this.zoomOrCenterUpdate(this.startingCenter, this.startingZoom)
-    setTimeout(() => this.$refs.leafletMap.mapObject.setView(this.startingCenter, 16), 1250)
+    const { lat, lng } = this.$route.query
+    if (lat === undefined && lng === undefined) {
+      await this.zoomOrCenterUpdate(this.startingCenter, this.startingZoom)
+    } else {
+      await this.zoomOrCenterUpdate(latLng(lat, lng), this.startingZoom)
+    }
+    setTimeout(() => this.$refs.leafletMap.mapObject.setView(this.currentCenterAndZoom.center, 16), 1250)
   },
 
   methods: {
@@ -113,6 +118,14 @@ export default {
           }
           resolve()
           return
+        }
+
+        //https://stackoverflow.com/questions/62462276/how-to-solve-avoided-redundant-navigation-to-current-location-error-in-vue
+
+        const { lat: latCurrent , lng: lngCurrent  } = this.currentCenterAndZoom.center
+        const { lat: latQuery, lng: lngQuery } = this.$route.query
+        if (+latCurrent !== +latQuery && +lngCurrent !== +lngQuery) {
+          this.$router.replace({ name: "Mapa", query: { ...this.currentCenterAndZoom.center }})
         }
 
         // TODO: Checar se o centro mudou para enviar uma nova requisicao
