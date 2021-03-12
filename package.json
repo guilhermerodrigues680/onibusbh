@@ -1,7 +1,12 @@
 {
   "name": "projeto",
   "version": "0.1.0",
+  "description": "Aplicação para acompanhamento da previsão de chegada e itinerários dos ônibus de BH",
   "private": true,
+  "author": "Guilherme Rodrigues <guilhermerodrigues680@gmail.com> (https://github.com/guilhermerodrigues680)",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://guilhermerodrigues680.github.io/onibusbh",
+  "repository": "github:guilhermerodrigues680/onibusbh",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
