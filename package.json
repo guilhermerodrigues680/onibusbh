@@ -5,7 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build-dev": "vue-cli-service build --mode development",
+    "build-github-pages": "vue-cli-service build --dest docs",
+    "build-dev-github-pages": "vue-cli-service build --mode development --dest docs"
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
