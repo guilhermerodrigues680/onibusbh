@@ -59,7 +59,7 @@ html {
   overflow-y: auto
 }
 
-.v-navigation-drawer {
+/* .v-navigation-drawer {
   z-index: 1090 !important;
-}
+} */
 </style>

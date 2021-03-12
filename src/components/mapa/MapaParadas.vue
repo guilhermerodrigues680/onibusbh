@@ -11,6 +11,7 @@
           @update:center="zoomOrCenterUpdate($event, null)"
           @update:zoom="zoomOrCenterUpdate(null, $event)"
           ref="leafletMap"
+          style="z-index: 0;"
         >
           <l-tile-layer
             :url="url"
@@ -18,7 +19,7 @@
           ></l-tile-layer>
           <CircleRaioParadas :circleCenter="circleCenter"/>
           <GeoJsonAreaBH />
-          <MarkerParada :paradasMarker="paradasMarker" />
+          <MarkerParada :paradasMarker="paradasMarker" @popupopen="popupopen"/>
         </l-map>
       </v-col>
     </v-row>
@@ -142,6 +143,9 @@ export default {
           resolve()
         }
       })
+    },
+    popupopen: function (latLngParada) {
+      this.startingCenter = latLngParada
     }
   }
 };

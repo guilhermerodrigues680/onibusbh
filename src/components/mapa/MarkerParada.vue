@@ -5,43 +5,17 @@
       :key="parada.cod"
       :lat-lng="parada.latLng"
       :icon="icon"
-      @click="loadPrevisoesParada(parada.cod)"
     >
-      <!-- <l-popup :content="" -->
-      <l-popup
-        ref="leafletPopup"
-      >
-        <div>{{parada.desc}}</div>
-        <div v-if="!paradaPrevisaoTemp.finished">
-          Carregando previsões...
-        </div>
-        <div v-if="paradaPrevisaoTemp.finished && !paradaPrevisaoTemp.sucesso">
-          Erro ao carregar previsões...
-        </div>
-        <div v-if="paradaPrevisaoTemp.finished && paradaPrevisaoTemp.sucesso">
-          <div v-if="paradaPrevisaoTemp.previsoes.length === 0">
-            Sem previsões para este ponto
-          </div>
-          <div v-if="paradaPrevisaoTemp.previsoes.length !== 0">
-            <div
-              v-for="prev in paradaPrevisaoTemp.previsoes"
-              :key="`${prev.codItinerario}-${prev.sgLin}-${prev.prev}`"
-              @click="loadItinerarioLinha(prev.codItinerario)"
-            >
-              {{ prev.sgLin }} - {{ prev.prev }}
-            </div>
-          </div>
-        </div>
-      </l-popup>
+      <PopupPrevissoesParada :parada="parada" @popupopen="popupopen"/>
     </l-marker>
   </div>
 </template>
 
 <script>
 import { icon, Icon } from "leaflet";
-import services from "../../services/index";
 
-import { LMarker, LPopup } from "vue2-leaflet";
+import { LMarker } from "vue2-leaflet";
+import PopupPrevissoesParada from "./PopupPrevissoesParada.vue";
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -55,7 +29,7 @@ export default {
 
   components: {
     LMarker,
-    LPopup
+    PopupPrevissoesParada
   },
 
   props: {
@@ -63,11 +37,6 @@ export default {
   },
 
   data: () => ({
-    paradaPrevisaoTemp: {
-      sucesso: null,
-      finished: null,
-      previsoes: []
-    },
     icon: icon({
       iconUrl: require('../../assets/icones-mapa/busstop.png'),
       iconSize: [20, 30],
@@ -80,20 +49,11 @@ export default {
   }),
 
   methods: {
-    loadPrevisoesParada: async function (codParada) {
-      this.paradaPrevisaoTemp.previsoes.splice(0)
-      this.paradaPrevisaoTemp.finished = false
-      this.paradaPrevisaoTemp.sucesso = null
-      const apiRes = await services.getPrevisoesParada(codParada)
-      this.paradaPrevisaoTemp.previsoes.push(...apiRes.previsoes)
-      this.paradaPrevisaoTemp.finished = true
-      this.paradaPrevisaoTemp.sucesso = true
-    },
-    loadItinerarioLinha: async function (codItinerario) {
-      const apiRes = await services.getItinerario(codItinerario)
-      const apiRes2 = await services.getVeiculosMapa(codItinerario)
-    },
+    popupopen: function (latLngParada) {
+      this.$emit('popupopen', latLngParada)
+    }
   }
+  
 }
 </script>
 
