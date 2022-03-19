@@ -1,6 +1,6 @@
 import { jsonpbh } from "./jsonp.js";
 
-const apiBaseUrl = 'http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws'
+const apiBaseUrl = 'http://bhz.siumobile.com.br:6060/siumobile-ws-v01/rest/ws';
 
 async function getLinhas() {
   try {
@@ -38,7 +38,7 @@ async function getLinhas() {
 async function getParadasProximas(longitude, latitude) {
   //http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarParadasProximas/$longitude/$latitude/0/retornoJSON
   try {
-    const apiRes = await jsonpbh(`${apiBaseUrl}/buscarParadasProximas/${longitude}/${latitude}/0`) // /retornoJSON
+    const apiRes = await jsonpbh(`${apiBaseUrl}/V3/buscarParadasProximas/${longitude}/${latitude}/0/null`) // /retornoJSON
     console.debug(apiRes)
     const { paradas, postosVenda, sucesso } = apiRes
     return {
@@ -72,7 +72,7 @@ async function getDadosParada(codParada) {
 async function getPrevisoesParada(codParada) {
   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarPrevisoes/$codParada/0/retornoJSON
   try {
-    const apiRes = await jsonpbh(`${apiBaseUrl}/buscarPrevisoes/${codParada}/0`) // /retornoJSON
+    const apiRes = await jsonpbh(`${apiBaseUrl}/V3/buscarPrevisoes/${codParada}/false/0/null`) // /retornoJSON
     console.debug(apiRes)
     const { horaConsulta, previsoes, sucesso } = apiRes
     return {
@@ -106,7 +106,7 @@ async function getParadasPorLinha(codLinha) {
 async function getItinerario(codItinerario) {
   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarItinerario/$codItinerario/0/retornoJSONItinerario
   try {
-    const apiRes = await jsonpbh(`${apiBaseUrl}/buscarItinerario/${codItinerario}/0`) // /retornoJSONItinerario
+    const apiRes = await jsonpbh(`${apiBaseUrl}/V3/buscarItinerario/${codItinerario}/0/null`) // /retornoJSONItinerario
     console.debug(apiRes)
     const { itinerarios, sucesso } = apiRes
     return {
@@ -128,7 +128,7 @@ async function getItinerario(codItinerario) {
 async function getVeiculosMapa(codItinerario) {
   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/retornaVeiculosMapa/$codItinerario/0/retornoJSONVeiculos
   try {
-    const apiRes = await jsonpbh(`${apiBaseUrl}/retornaVeiculosMapa/${codItinerario}/0`) // /retornoJSONItinerario
+    const apiRes = await jsonpbh(`${apiBaseUrl}/V3/retornaVeiculosMapa/${codItinerario}/0/null`) // /retornoJSONItinerario
     console.debug(apiRes)
     const { mensagem, veiculos, sucesso } = apiRes
     return {
@@ -151,3 +151,13 @@ export default {
   getItinerario,
   getVeiculosMapa
 }
+
+console.debug({
+  getLinhas,
+  getParadasProximas,
+  getDadosParada,
+  getPrevisoesParada,
+  getParadasPorLinha,
+  getItinerario,
+  getVeiculosMapa
+})
