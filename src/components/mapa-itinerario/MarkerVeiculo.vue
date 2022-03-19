@@ -4,7 +4,7 @@
       v-for="veiculo in veiculos"
       :key="veiculo.numVeicGestor"
       :lat-lng="[veiculo.lat, veiculo.long]"
-      :icon="getBusIcon(veiculo.cor)"
+      :icon="getBusIcon(veiculo.cor != null ? veiculo.cor : 'unknown')"
     >
       <l-popup class="text-center">
         <div
