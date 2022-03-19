@@ -45,6 +45,8 @@ A aplicação consome a **API do SIU Mobile** que é transmitida sobre HTTP, por
 
 HTTP não é considerado seguro para trafegar informações sensíveis, porém como esta aplicação não envia ou recebe informações sigilosas o uso do HTTP é aceitável.
 
+> Isso será corrigido em uma próxima versão criando uma API própria para essa aplicação e assim todo tráfego cliente-servidor será HTTPS.
+
 ## Versionamento
 
 Este projeto segue o seguinte o [Versionamento Semântico 2.0.0](https://semver.org/lang/pt-BR/spec/v2.0.0.html).

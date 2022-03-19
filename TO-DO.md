@@ -21,6 +21,12 @@
 
 **Readme PWA e gif intalacao**
 
+**API aplicação**
+
+- Criar uma API própria para essa aplicação e assim todo tráfego cliente-servidor será HTTPS.
+
+------------
+
 - GeoJSON
 
 https://servicodados.ibge.gov.br/api/docs/localidades
