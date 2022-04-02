@@ -36,6 +36,30 @@ paths:
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
 
+  /api/v1/linhas/{cod}/paradas:
+    get:
+      summary: Busca as paradas de uma linha
+      tags:
+        - SIU Mobile
+      parameters:
+        - in: path
+          name: cod
+          schema:
+            type: integer
+            minimum: 0
+            example: 683
+          required: true
+          description: Código da linha
+      responses:
+        "200":
+          $ref: "#/components/responses/GetParadasLinhaResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestErrorResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
+
   /api/v1/paradas:
     get:
       summary: Busca todas as paradas próximas a uma localização
@@ -112,14 +136,6 @@ paths:
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
 
-  /api/v1/paradas-por-linha:
-    get:
-      summary: xxxx
-      tags:
-        - SIU Mobile
-      responses:
-        default:
-          description: OK
   /api/v1/itinerario:
     get:
       summary: xxxx
@@ -160,7 +176,7 @@ components:
       type: object
       properties:
         cod:
-          type: string
+          type: integer
         sgl:
           type: string
         nom:
@@ -187,6 +203,22 @@ components:
           format: int32
           nullable: true
 
+    ParadaLinha:
+      type: object
+      properties:
+        cod:
+          type: integer
+          format: int32
+        end:
+          type: string
+        siu:
+          type: string
+        sent:
+          type: string
+        temVeic:
+          type: boolean
+
+
   responses:
     GetLinhasResponse:
       description: Lista de linhas
@@ -195,8 +227,6 @@ components:
           schema:
             type: object
             properties:
-              sucesso:
-                type: boolean
               linhas:
                 type: array
                 items:
@@ -205,6 +235,18 @@ components:
                 type: array
                 items:
                   type: object
+
+    GetParadasLinhaResponse:
+      description: Lista de linhas
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              paradas:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ParadaLinha"
 
     GetParadaResponse:
       description: Parada

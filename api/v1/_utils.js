@@ -1,3 +1,4 @@
+// FIXME: Usar isNumeric do api-src
 function isNumeric(str) {
   if (typeof str === "number") return true; // we only process strings!
   if (typeof str != "string") return false; // we only process strings!

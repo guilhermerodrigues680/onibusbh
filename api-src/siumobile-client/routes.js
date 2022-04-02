@@ -1,5 +1,6 @@
 import apiInstance from "./api-instance";
 import errors from "../errors";
+import utils from "../utils";
 
 async function getLinhas() {
   const apiJsonPRes = await apiInstance.get("/buscarLinhas/jsonpCallback");
@@ -22,19 +23,20 @@ async function getLinhas() {
   for (const linStrObj of linhasStr) {
     try {
       const parsed = JSON.parse(linStrObj);
+      if (!utils.isNumeric(parsed.cod)) {
+        throw new Error(`o código da linha não é um número: cod=${parsed.cod}`);
+      }
+      parsed.cod = +parsed.cod;
       linhasArr.push(parsed);
     } catch (error) {
-      console.error("Erro no parse da linha", linStrObj, error);
+      throw new errors.InternalServerError(`erro no parse da linha: ${linStrObj}`, error);
     }
   }
 
-  const res = {
-    sucesso: apiRes.sucesso,
+  return {
     linhas: linhasArr,
     subLinhas: apiRes.subLinhas
   };
-  console.debug(res);
-  return res;
 }
 
 async function getParadasProximas(latitude, longitude) {
@@ -108,22 +110,26 @@ async function getPrevisoesParada(codParada) {
   };
 }
 
-// async function getParadasPorLinha(codLinha) {
-//   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarParadasPorLinha/$codLinha/0/retornoJSON
-//   try {
-//     const apiRes = await jsonpbh(`${apiBaseUrl}/buscarParadasPorLinha/${codLinha}/0`) // /retornoJSON
-//     console.debug(apiRes)
-//     const { horaConsulta, previsoes, sucesso } = apiRes
-//     return {
-//       horaConsulta,
-//       previsoes,
-//       sucesso
-//     }
-//   } catch (error) {
-//     console.error(error)
-//     throw error
-//   }
-// }
+async function getParadasPorLinha(codLinha) {
+  // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarParadasPorLinha/$codLinha/0/retornoJSON
+
+  const apiJsonPRes = await apiInstance.get(`/buscarParadasPorLinha/${codLinha}/0/jsonpCallback`);
+
+  let apiRes;
+  const jsonStr = apiJsonPRes.data.slice(
+    apiJsonPRes.data.indexOf("(") + 1,
+    apiJsonPRes.data.lastIndexOf(")")
+  );
+  apiRes = JSON.parse(jsonStr);
+
+  if (!apiRes.sucesso) {
+    throw new errors.BadGatewayError("erro interno ao buscar paradas por linha", apiRes);
+  }
+
+  return {
+    paradas: apiRes.paradas
+  };
+}
 
 // async function getItinerario(codItinerario) {
 //   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarItinerario/$codItinerario/0/retornoJSONItinerario
@@ -168,8 +174,8 @@ export default {
   getLinhas,
   getParadasProximas,
   getParada,
-  getPrevisoesParada
-  // getParadasPorLinha,
+  getPrevisoesParada,
+  getParadasPorLinha
   // getItinerario,
   // getVeiculosMapa
 };
