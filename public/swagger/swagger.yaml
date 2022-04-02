@@ -66,7 +66,7 @@ paths:
 
   /api/v1/paradas/{cod}:
     get:
-      summary: Busca um parada
+      summary: Busca uma parada
       tags:
         - SIU Mobile
       parameters:
@@ -87,14 +87,30 @@ paths:
           $ref: "#/components/responses/NotFoundErrorResponse"
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
-  /api/v1/previsoes-parada:
+
+  /api/v1/paradas/{cod}/previssoes:
     get:
-      summary: xxxx
+      summary: Busca as previssões de uma parada
       tags:
         - SIU Mobile
+      parameters:
+        - in: path
+          name: cod
+          schema:
+            type: integer
+            minimum: 0
+            example: 5623
+          required: true
+          description: Código da parada
       responses:
-        default:
-          description: OK
+        "200":
+          $ref: "#/components/responses/GetPrevissoesParadaResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestErrorResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
 
   /api/v1/paradas-por-linha:
     get:
@@ -214,6 +230,41 @@ components:
               #     type: object
               # sucesso:
               #   type: boolean
+
+    GetPrevissoesParadaResponse:
+      description: Previssões de uma parada
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              previsoes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    sgLin:
+                      type: string
+                    prev:
+                      type: string
+                    tpAcess:
+                      type: integer
+                      format: int32
+                    cor:
+                      type: integer
+                      format: int32
+                      nullable: true
+                    numVeicGestor:
+                      type: string
+                    apelidoLinha:
+                      type: string
+                    codItinerario:
+                      type: integer
+                      format: int32
+              horaConsulta:
+                type: string
+                example: "02/04/2022 14:47:38"
+
 
     BadRequestErrorResponse:
       description: Erro nos dados enviados

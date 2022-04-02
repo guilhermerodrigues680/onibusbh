@@ -1,6 +1,6 @@
-import errors from "../../../api-src/errors";
-import { routes } from "../../../api-src/siumobile-client";
-import { isNumeric, getErrResObj } from "../_utils";
+import errors from "../../../../api-src/errors";
+import { routes } from "../../../../api-src/siumobile-client";
+import { isNumeric, getErrResObj } from "../../_utils";
 
 export default async function handler(request, response) {
   const { method } = request;
@@ -27,7 +27,7 @@ export default async function handler(request, response) {
   }
 
   try {
-    const res = await routes.getParada(+cod);
+    const res = await routes.getPrevisoesParada(+cod);
     response.status(200).json(res);
   } catch (error) {
     console.error(error);
