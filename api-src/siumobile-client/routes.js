@@ -2,6 +2,8 @@ import apiInstance from "./api-instance";
 import errors from "../errors";
 import utils from "../utils";
 
+// TODO: Refatorar parse de chamadas JSONP
+
 async function getLinhas() {
   const apiJsonPRes = await apiInstance.get("/buscarLinhas/jsonpCallback");
 
