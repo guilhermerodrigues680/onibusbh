@@ -131,21 +131,28 @@ async function getParadasPorLinha(codLinha) {
   };
 }
 
-// async function getItinerario(codItinerario) {
-//   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarItinerario/$codItinerario/0/retornoJSONItinerario
-//   try {
-//     const apiRes = await jsonpbh(`${apiBaseUrl}/V3/buscarItinerario/${codItinerario}/0/null`) // /retornoJSONItinerario
-//     console.debug(apiRes)
-//     const { itinerarios, sucesso } = apiRes
-//     return {
-//       itinerarios,
-//       sucesso
-//     }
-//   } catch (error) {
-//     console.error(error)
-//     throw error
-//   }
-// }
+async function getItinerario(codItinerario) {
+  // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarItinerario/$codItinerario/0/retornoJSONItinerario
+
+  const apiJsonPRes = await apiInstance.get(
+    `/V3/buscarItinerario/${codItinerario}/0/null/jsonpCallback`
+  );
+
+  let apiRes;
+  const jsonStr = apiJsonPRes.data.slice(
+    apiJsonPRes.data.indexOf("(") + 1,
+    apiJsonPRes.data.lastIndexOf(")")
+  );
+  apiRes = JSON.parse(jsonStr);
+
+  if (!apiRes.sucesso) {
+    throw new errors.BadGatewayError("erro interno ao buscar paradas por linha", apiRes);
+  }
+
+  return {
+    itinerarios: apiRes.itinerarios
+  };
+}
 
 // /**
 //  * Retorna a localização de todos os veículos que estão em rota fazendo o itinerario
@@ -175,7 +182,7 @@ export default {
   getParadasProximas,
   getParada,
   getPrevisoesParada,
-  getParadasPorLinha
-  // getItinerario,
+  getParadasPorLinha,
+  getItinerario
   // getVeiculosMapa
 };

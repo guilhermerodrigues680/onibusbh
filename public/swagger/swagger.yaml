@@ -136,14 +136,30 @@ paths:
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
 
-  /api/v1/itinerario:
+  /api/v1/itinerarios/{cod}:
     get:
-      summary: xxxx
+      summary: Busca os pontos na superficie terrestre que formam um itinerário
       tags:
         - SIU Mobile
+      parameters:
+        - in: path
+          name: cod
+          schema:
+            type: integer
+            minimum: 0
+            example: 48663
+          required: true
+          description: Código do itinerário
       responses:
-        default:
-          description: OK
+        "200":
+          $ref: "#/components/responses/GetItinerarioResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestErrorResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
+
   /api/v1/veiculos-mapa:
     get:
       summary: xxxx
@@ -217,6 +233,14 @@ components:
           type: string
         temVeic:
           type: boolean
+
+    PontoItinerario:
+      type: object
+      properties:
+        coordX:
+          type: number
+        coordY:
+          type: number
 
 
   responses:
@@ -307,6 +331,17 @@ components:
                 type: string
                 example: "02/04/2022 14:47:38"
 
+    GetItinerarioResponse:
+      description: Pontos na superficie terrestre que formam o itinerário
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              itinerarios:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PontoItinerario"
 
     BadRequestErrorResponse:
       description: Erro nos dados enviados
