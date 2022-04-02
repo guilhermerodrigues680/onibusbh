@@ -1,6 +1,6 @@
 {
   "name": "projeto",
-  "version": "0.0.1-alpha.1",
+  "version": "0.1.0-0",
   "description": "Aplicação para acompanhamento da previsão de chegada e itinerários dos ônibus de BH",
   "private": true,
   "author": "Guilherme Rodrigues <guilhermerodrigues680@gmail.com> (https://github.com/guilhermerodrigues680)",
