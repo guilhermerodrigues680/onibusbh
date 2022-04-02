@@ -1,9 +1,0 @@
-@host=http://localhost:3000
-
-### Paradas Proximas
-
-HEAD  {{host}}/api/v1/paradas-proximas
-
-
-###
-GET {{host}}/api/v1/swagger

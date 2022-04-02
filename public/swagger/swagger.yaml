@@ -1,0 +1,203 @@
+openapi: 3.0.3
+
+info:
+  title: Ônibus BH API Gateway
+  version: 0.1.0
+  description: Ônibus BH API Gateway é um serviço utilizado pela Aplicação Web **[Ônibus BH](https://onibusbh.guiodev.com)**.
+  termsOfService: https://onibusbh.guiodev.com/terms-of-service
+  contact:
+    name: Gui o Dev
+    email: guilhermerodrigues680@gmail.com
+    url: https://guiodev.com
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+  - url: https://onibusbh.guiodev.com
+    description: Servidor de produção
+  # - url: https://sandbox-onibusbh.guiodev.com
+  #   description: Servidor de homologacao
+
+tags:
+  # - name: Default
+  #   description: Não agrupadas
+  - name: SIU Mobile
+    description: Serviços da API do SIU Mobile
+
+paths:
+  /api/v1/linhas:
+    get:
+      summary: Busca todas as linhas do sistema.
+      tags:
+        - SIU Mobile
+      responses:
+        "200":
+          $ref: "#/components/responses/GetLinhasResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
+
+  /api/v1/paradas-proximas:
+    get:
+      summary: Busca todas as paradas próximas a uma localização
+      tags:
+        - SIU Mobile
+      parameters:
+        - in: query
+          name: lat
+          schema:
+            type: number
+          required: true
+          description: Latitude
+        - in: query
+          name: lng
+          schema:
+            type: number
+          required: true
+          description: Longitude
+      responses:
+        "200":
+          $ref: "#/components/responses/GetParadasProximasResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
+
+  /api/v1/dados-parada:
+    get:
+      summary: xxxx
+      tags:
+        - SIU Mobile
+      responses:
+        default:
+          description: OK
+  /api/v1/previsoes-parada:
+    get:
+      summary: xxxx
+      tags:
+        - SIU Mobile
+      responses:
+        default:
+          description: OK
+
+  /api/v1/paradas-por-linha:
+    get:
+      summary: xxxx
+      tags:
+        - SIU Mobile
+      responses:
+        default:
+          description: OK
+  /api/v1/itinerario:
+    get:
+      summary: xxxx
+      tags:
+        - SIU Mobile
+      responses:
+        default:
+          description: OK
+  /api/v1/veiculos-mapa:
+    get:
+      summary: xxxx
+      tags:
+        - SIU Mobile
+      responses:
+        default:
+          description: OK
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: number
+            codeText:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: string
+
+    Linha:
+      type: object
+      properties:
+        cod:
+          type: string
+        sgl:
+          type: string
+        nom:
+          type: string
+        praca:
+          type: string
+
+  responses:
+    GetLinhasResponse:
+      description: Lista de linhas
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              sucesso:
+                type: boolean
+              linhas:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Linha"
+              subLinhas:
+                type: array
+                items:
+                  type: object
+
+    GetParadasProximasResponse:
+      description: Lista de paradas próximas
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              paradas:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cod:
+                      type: integer
+                      format: int32
+                    siu:
+                      type: string
+                    x:
+                      type: number
+                    y:
+                      type: number
+                    desc:
+                      type: string
+                    cor:
+                      type: integer
+                      format: int32
+                      nullable: true
+              postosVenda:
+                type: array
+                items:
+                  type: object
+              sucesso:
+                type: boolean
+
+    BadRequestErrorResponse:
+      description: Erro nos dados enviados
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InternalErrorResponse:
+      description: Erro interno
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

@@ -41,6 +41,8 @@ npm run lint
 
 ## Vercel
 
+https://vercel.com/docs/concepts/functions/serverless-functions
+
 ```sh
 npx vercel dev
 ```

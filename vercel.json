@@ -1,7 +1,9 @@
 {
-  "functions": {
-    "api/v1/swagger/index.js": {
-      "includeFiles": "api/v1/swagger/_files/**"
+  "redirects": [
+    {
+      "source": "/swagger",
+      "destination": "/swagger/",
+      "permanent": false
     }
-  }
+  ]
 }
