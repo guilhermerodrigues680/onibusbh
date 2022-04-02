@@ -36,7 +36,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
 
-  /api/v1/paradas-proximas:
+  /api/v1/paradas:
     get:
       summary: Busca todas as paradas próximas a uma localização
       tags:
@@ -46,30 +46,47 @@ paths:
           name: lat
           schema:
             type: number
+            example: -19.9228
           required: true
           description: Latitude
         - in: query
           name: lng
           schema:
             type: number
+            example: -43.9449
           required: true
           description: Longitude
       responses:
         "200":
-          $ref: "#/components/responses/GetParadasProximasResponse"
+          $ref: "#/components/responses/GetParadasResponse"
         "400":
           $ref: "#/components/responses/BadRequestErrorResponse"
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
 
-  /api/v1/dados-parada:
+  /api/v1/paradas/{cod}:
     get:
-      summary: xxxx
+      summary: Busca um parada
       tags:
         - SIU Mobile
+      parameters:
+        - in: path
+          name: cod
+          schema:
+            type: integer
+            minimum: 0
+            example: 5623
+          required: true
+          description: Código da parada
       responses:
-        default:
-          description: OK
+        "200":
+          $ref: "#/components/responses/GetParadaResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestErrorResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
   /api/v1/previsoes-parada:
     get:
       summary: xxxx
@@ -135,6 +152,25 @@ components:
         praca:
           type: string
 
+    Parada:
+      type: object
+      properties:
+        cod:
+          type: integer
+          format: int32
+        siu:
+          type: string
+        x:
+          type: number
+        y:
+          type: number
+        desc:
+          type: string
+        cor:
+          type: integer
+          format: int32
+          nullable: true
+
   responses:
     GetLinhasResponse:
       description: Lista de linhas
@@ -154,7 +190,14 @@ components:
                 items:
                   type: object
 
-    GetParadasProximasResponse:
+    GetParadaResponse:
+      description: Parada
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Parada"
+
+    GetParadasResponse:
       description: Lista de paradas próximas
       content:
         application/json:
@@ -164,32 +207,23 @@ components:
               paradas:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    cod:
-                      type: integer
-                      format: int32
-                    siu:
-                      type: string
-                    x:
-                      type: number
-                    y:
-                      type: number
-                    desc:
-                      type: string
-                    cor:
-                      type: integer
-                      format: int32
-                      nullable: true
-              postosVenda:
-                type: array
-                items:
-                  type: object
-              sucesso:
-                type: boolean
+                  $ref: "#/components/schemas/Parada"
+              # postosVenda:
+              #   type: array
+              #   items:
+              #     type: object
+              # sucesso:
+              #   type: boolean
 
     BadRequestErrorResponse:
       description: Erro nos dados enviados
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFoundErrorResponse:
+      description: Item não encontrado
       content:
         application/json:
           schema:

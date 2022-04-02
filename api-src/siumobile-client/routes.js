@@ -1,4 +1,5 @@
 import apiInstance from "./api-instance";
+import errors from "../errors";
 
 async function getLinhas() {
   const apiJsonPRes = await apiInstance.get("/buscarLinhas/jsonpCallback");
@@ -50,30 +51,38 @@ async function getParadasProximas(latitude, longitude) {
   );
   apiRes = JSON.parse(jsonStr);
 
-  const { paradas, postosVenda, sucesso } = apiRes;
+  if (!apiRes.sucesso) {
+    throw new errors.BadGatewayError("erro interno ao buscar a parada", apiRes);
+  }
+
   return {
-    paradas,
-    postosVenda,
-    sucesso
+    paradas: apiRes.paradas
   };
 }
 
-// async function getDadosParada(codParada) {
-//   //http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarDadosParada/$codParada/0/retornoJSONPontosItinerario
-//   try {
-//     const apiRes = await jsonpbh(`${apiBaseUrl}/buscarDadosParada/${codParada}/0`) // /retornoJSONPontosItinerario
-//     console.debug(apiRes)
-//     // const { paradas, postosVenda, sucesso } = apiRes
-//     // return {
-//     //   paradas,
-//     //   postosVenda,
-//     //   sucesso
-//     // }
-//   } catch (error) {
-//     console.error(error)
-//     throw error
-//   }
-// }
+async function getParada(codParada) {
+  //http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarDadosParada/$codParada/0/retornoJSONPontosItinerario
+
+  const apiJsonPRes = await apiInstance.get(`/buscarDadosParada/${codParada}/0/jsonpCallback`);
+
+  let apiRes;
+  const jsonStr = apiJsonPRes.data.slice(
+    apiJsonPRes.data.indexOf("(") + 1,
+    apiJsonPRes.data.lastIndexOf(")")
+  );
+  apiRes = JSON.parse(jsonStr);
+
+  if (!apiRes.sucesso) {
+    throw new errors.BadGatewayError("erro interno ao buscar a parada", apiRes);
+  }
+  if (!apiRes?.paradas?.length) {
+    throw new errors.NotFoundError("parada não encontrada", apiRes);
+  }
+  if (apiRes.paradas.length > 1) {
+    throw new errors.InternalServerError("mais de uma parada encontrada", apiRes);
+  }
+  return apiRes.paradas[0];
+}
 
 // async function getPrevisoesParada(codParada) {
 //   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/buscarPrevisoes/$codParada/0/retornoJSON
@@ -150,8 +159,8 @@ async function getParadasProximas(latitude, longitude) {
 
 export default {
   getLinhas,
-  getParadasProximas
-  // getDadosParada,
+  getParadasProximas,
+  getParada
   // getPrevisoesParada,
   // getParadasPorLinha,
   // getItinerario,

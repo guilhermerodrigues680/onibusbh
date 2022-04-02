@@ -1,5 +1,5 @@
-import { routes } from "../../api-src/siumobile-client";
-import { isNumeric, getErrResObj } from "./_utils";
+import { routes } from "../../../api-src/siumobile-client";
+import { isNumeric, getErrResObj } from "../_utils";
 
 export default async function handler(request, response) {
   const { method } = request;
