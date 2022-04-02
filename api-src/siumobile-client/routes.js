@@ -160,22 +160,28 @@ async function getItinerario(codItinerario) {
 //  * @param {Number} codItinerario
 //  * @returns Localização de todos os veículos que estão em rota fazendo o itinerario
 //  */
-// async function getVeiculosMapa(codItinerario) {
-//   // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/retornaVeiculosMapa/$codItinerario/0/retornoJSONVeiculos
-//   try {
-//     const apiRes = await jsonpbh(`${apiBaseUrl}/V3/retornaVeiculosMapa/${codItinerario}/0/null`) // /retornoJSONItinerario
-//     console.debug(apiRes)
-//     const { mensagem, veiculos, sucesso } = apiRes
-//     return {
-//       mensagem,
-//       veiculos,
-//       sucesso
-//     }
-//   } catch (error) {
-//     console.error(error)
-//     throw error
-//   }
-// }
+async function getVeiculosMapa(codItinerario) {
+  // http://mobile-l.sitbus.com.br:6060/siumobile-ws-v01/rest/ws/retornaVeiculosMapa/$codItinerario/0/retornoJSONVeiculos
+
+  const apiJsonPRes = await apiInstance.get(
+    `/V3/retornaVeiculosMapa/${codItinerario}/0/null/jsonpCallback`
+  );
+
+  let apiRes;
+  const jsonStr = apiJsonPRes.data.slice(
+    apiJsonPRes.data.indexOf("(") + 1,
+    apiJsonPRes.data.lastIndexOf(")")
+  );
+  apiRes = JSON.parse(jsonStr);
+
+  if (!apiRes.sucesso) {
+    throw new errors.BadGatewayError("erro interno ao buscar paradas por linha", apiRes);
+  }
+
+  return {
+    veiculos: apiRes.veiculos
+  };
+}
 
 export default {
   getLinhas,
@@ -183,6 +189,6 @@ export default {
   getParada,
   getPrevisoesParada,
   getParadasPorLinha,
-  getItinerario
-  // getVeiculosMapa
+  getItinerario,
+  getVeiculosMapa
 };

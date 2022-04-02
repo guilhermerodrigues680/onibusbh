@@ -162,14 +162,29 @@ paths:
         "500":
           $ref: "#/components/responses/InternalErrorResponse"
 
-  /api/v1/veiculos-mapa:
+  /api/v1/itinerarios/{cod}/veiculos-tempo-real:
     get:
-      summary: xxxx
+      summary: Busca a localização de todos os veículos que estão em rota fazendo o itinerario
       tags:
         - SIU Mobile
+      parameters:
+        - in: path
+          name: cod
+          schema:
+            type: integer
+            minimum: 0
+            example: 46571
+          required: true
+          description: Código do itinerário
       responses:
-        default:
-          description: OK
+        "200":
+          $ref: "#/components/responses/GetVeiculosTempoRealItinerarioResponse"
+        "400":
+          $ref: "#/components/responses/BadRequestErrorResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalErrorResponse"
 
 components:
   schemas:
@@ -243,6 +258,24 @@ components:
           type: number
         coordY:
           type: number
+
+    VeiculoTempoRealItinerario:
+      type: object
+      properties:
+        lat:
+          type: number
+        long:
+          type: number
+        cor:
+          type: integer
+          format: int32
+          nullable: true
+        descricao:
+          type: string
+        numVeicGestor:
+          type: string
+        flagAnimacao:
+          type: string
 
 
   responses:
@@ -344,6 +377,18 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/PontoItinerario"
+
+    GetVeiculosTempoRealItinerarioResponse:
+      description: Localização de todos os veículos que estão em rota fazendo o itinerario
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              veiculos:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VeiculoTempoRealItinerario"
 
     BadRequestErrorResponse:
       description: Erro nos dados enviados
