@@ -10,6 +10,5 @@
       "destination": "/api/",
       "permanent": false
     }
-  ],
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/v1/404.js" }]
+  ]
 }
