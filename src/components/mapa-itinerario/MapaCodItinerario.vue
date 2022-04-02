@@ -29,7 +29,7 @@
 
 <script>
 import { latLng } from "leaflet";
-import services from "../../services/index";
+import { getVeiculosMapa } from "../../services/onibusbh-api-gateway";
 
 import { LMap, LTileLayer, LPolyline } from "vue2-leaflet";
 import GeoJsonAreaBH from "../mapa/GeoJsonAreaBH.vue";
@@ -90,7 +90,7 @@ export default {
 
   methods: {
     loadVeiculosMapa: async function () {
-      const apiResVeiculos = await services.getVeiculosMapa(this.codItinerario)
+      const apiResVeiculos = await getVeiculosMapa(this.codItinerario)
       this.veiculos.splice(0)
       apiResVeiculos.veiculos.forEach(v => this.veiculos.push(v))
     }

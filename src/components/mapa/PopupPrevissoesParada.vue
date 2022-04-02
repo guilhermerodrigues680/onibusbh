@@ -7,7 +7,7 @@
 
 <script>
 import { latLng } from "leaflet";
-import services from "../../services/index";
+import { getPrevisoesParada } from "../../services/onibusbh-api-gateway";
 
 import { LPopup } from "vue2-leaflet";
 import SheetPopupPrevissoesParada from "./SheetPopupPrevissoesParada.vue";
@@ -51,7 +51,7 @@ export default {
         this.paradaPrevisaoTemp.previsoes.splice(0)
         this.paradaPrevisaoTemp.finished = false
         this.paradaPrevisaoTemp.sucesso = null
-        const apiRes = await services.getPrevisoesParada(codParada)
+        const apiRes = await getPrevisoesParada(codParada)
         this.paradaPrevisaoTemp.previsoes.push(...apiRes.previsoes)
         this.paradaPrevisaoTemp.finished = true
         this.paradaPrevisaoTemp.sucesso = true

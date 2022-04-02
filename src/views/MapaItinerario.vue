@@ -11,7 +11,7 @@
 <script>
 import MapaCodItinerario from "../components/mapa-itinerario/MapaCodItinerario.vue";
 
-import services from "../services/index";
+import { getItinerario } from "../services/onibusbh-api-gateway";
 
 export default {
   name: "MapaItinerario",
@@ -28,7 +28,7 @@ export default {
   created: async function () {
     const { codItinerario } = this.$route.params
     console.log(this)
-    const apiResItinerarios = await services.getItinerario(codItinerario)
+    const apiResItinerarios = await getItinerario(codItinerario)
     this.itinerarios = apiResItinerarios.itinerarios
   }
 };

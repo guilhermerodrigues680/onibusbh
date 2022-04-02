@@ -17,7 +17,7 @@
 import L from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
-import services from "../services";
+import { getLinhas } from "../services/onibusbh-api-gateway";
 
 export default {
   name: 'Linhas',
@@ -40,7 +40,7 @@ export default {
 
   created: async function() {
     try {
-      const apires = await services.getLinhas();
+      const apires = await getLinhas();
       this.linhas = apires.linhas
       console.log('Linhas carregadas')
     } catch (error) {

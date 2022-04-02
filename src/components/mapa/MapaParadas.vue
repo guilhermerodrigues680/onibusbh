@@ -30,7 +30,7 @@
 import { latLng } from "leaflet";
 import { LMap, LTileLayer } from "vue2-leaflet";
 
-import services from "../../services/index";
+import { getParadasProximas } from "../../services/onibusbh-api-gateway";
 import MarkerParada from "./MarkerParada.vue";
 import GeoJsonAreaBH from "./GeoJsonAreaBH.vue";
 import CircleRaioParadas from "./CircleRaioParadas.vue";
@@ -78,7 +78,7 @@ export default {
     loadParadasProximas(center) {
       return new Promise(async (resolve, reject) => {
         try {
-          const apiRes = await services.getParadasProximas(center.lng, center.lat);
+          const apiRes = await getParadasProximas(center.lat, center.lng);
           const paradas = apiRes.paradas.map(p => ({ ...p, latLng: latLng(p.y, p.x) }))
 
           // Cada parada é identificada pelo atributo 'cod'
@@ -134,11 +134,11 @@ export default {
 
         // try {
         //  console.debug(round5(oldCenter.lat), round5(center.lat))
-        //   console.debug(round5(oldCenter.lng), round5(center.lng)) 
+        //   console.debug(round5(oldCenter.lng), round5(center.lng))
         // } catch(e) {
         //   console.debug(e)
         // }
-        
+
 
         // // Caso seja uma atualiazacao de centro e/ou zoom
         // if (oldCenter !== null && oldCenter.lat === center.lat && oldCenter.lng === center.lng) {
