@@ -4,6 +4,12 @@
       "source": "/swagger",
       "destination": "/swagger/",
       "permanent": false
+    },
+    {
+      "source": "/api",
+      "destination": "/api/",
+      "permanent": false
     }
-  ]
+  ],
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/v1/404.js" }]
 }
