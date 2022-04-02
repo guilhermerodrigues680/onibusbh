@@ -1,9 +1,11 @@
 openapi: 3.0.3
 
 info:
-  title: Ônibus BH API Gateway
+  title: Gui o Dev - Ônibus BH API Gateway
   version: 0.1.0
-  description: Ônibus BH API Gateway é um serviço utilizado pela Aplicação Web **[Ônibus BH](https://onibusbh.guiodev.com)**.
+  description: |
+    Ônibus BH API Gateway é um serviço utilizado pela Aplicação Web _[Ônibus BH](https://onibusbh.guiodev.com)_.
+    No link _[Usando o Ônibus BH API Gateway](https://onibusbh.guiodev.com/docs/api/how-to-use)_ há orientações de como usar o Ônibus BH API Gateway em seu serviço.
   termsOfService: https://onibusbh.guiodev.com/terms-of-service
   contact:
     name: Gui o Dev
