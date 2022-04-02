@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/v1/swagger/index.js": {
+      "includeFiles": "api/v1/swagger/_files/**"
+    }
+  }
+}

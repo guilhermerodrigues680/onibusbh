@@ -6,7 +6,7 @@ Aplicação Web para acompanhamento da previsão de chegada e itinerários dos �
 
 [Acesse aqui o Ônibus BH](http://onibusbh.guilhermeonline.com.br/)
 
-## Configuração do projeto 
+## Configuração do projeto
 
 ### Instalação de dependências
 
@@ -38,6 +38,12 @@ npm run lint
 - [Vue CLI - Configuration Reference](https://cli.vuejs.org/config/).
 - [Vuetify - Material Design Framework](https://vuetifyjs.com/en/)
 - [Vue Leaflet](https://vue2-leaflet.netlify.app/)
+
+## Vercel
+
+```sh
+npx vercel dev
+```
 
 ## Conteúdo HTTP
 
