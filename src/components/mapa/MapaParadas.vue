@@ -5,7 +5,7 @@
         <l-map
           class="fill-height"
           :zoom="startingZoom"
-          :center="startingCenter"
+          :center.sync="startingCenter"
           :options="mapOptions"
           :minZoom="11"
           @update:center="zoomOrCenterUpdate($event, null)"
@@ -17,21 +17,47 @@
           <CircleRaioParadas :circleCenter="circleCenter" />
           <GeoJsonAreaBH />
           <MarkerParada :paradasMarker="paradasMarker" @popupopen="popupopen" />
+          <MarkerUserPosition v-if="!!userPosition" :userPositionLatLng="userPosition" />
         </l-map>
       </v-col>
     </v-row>
+
+    <v-fab-transition>
+      <v-btn
+        color="red"
+        fab
+        large
+        dark
+        bottom
+        right
+        fixed
+        class="v-btn--example"
+        @click="goToUserPosition"
+      >
+        <v-icon>mdi-crosshairs-gps</v-icon>
+      </v-btn>
+    </v-fab-transition>
+
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </v-container>
 </template>
 
 <script>
-import { latLng } from "leaflet";
+import { LatLng, latLng } from "leaflet";
 import { LMap, LTileLayer } from "vue2-leaflet";
 
 import { getParadasProximas } from "../../services/onibusbh-api-gateway";
 import MarkerParada from "./MarkerParada.vue";
+import MarkerUserPosition from "./MarkerUserPosition.vue";
 import GeoJsonAreaBH from "./GeoJsonAreaBH.vue";
 import CircleRaioParadas from "./CircleRaioParadas.vue";
 import * as geolocation from "./js/geolocation";
+import Tracker from "./js/Tracker";
+import alerts from "@/services/alerts";
+
+const tracker = new Tracker();
 
 export default {
   name: "MapaParadas",
@@ -41,12 +67,14 @@ export default {
     LTileLayer,
     MarkerParada,
     GeoJsonAreaBH,
-    CircleRaioParadas
+    CircleRaioParadas,
+    MarkerUserPosition
   },
 
   data() {
     return {
       startingZoom: 13,
+      // TODO: Refatorar os usos de startingCenter pois agora há o modificador sync
       startingCenter: latLng(-19.9228, -43.9449),
       url:
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}" +
@@ -61,22 +89,25 @@ export default {
       currentCenterAndZoom: {
         zoom: null,
         center: null
-      }
+      },
+      /** @type {LatLng} */
+      userPosition: null,
+      loading: true
     };
   },
 
   created: async function() {
     let { lat, lng } = this.$route.query;
     if (lat === undefined && lng === undefined) {
+      // TODO: reusar funcao goToUserPosition
       if (geolocation.HAS_GEOLOCATION) {
         console.debug("browser suporta geolocation");
         try {
           const res = await geolocation.getCurrentPosition();
           console.debug(res);
-          await this.zoomOrCenterUpdate(
-            latLng(res.coords.latitude, res.coords.longitude),
-            this.startingZoom
-          );
+          const ll = latLng(res.coords.latitude, res.coords.longitude);
+          await this.zoomOrCenterUpdate(ll, this.startingZoom);
+          this.userPosition = ll;
         } catch (error) {
           console.error(error);
           alert(error.message);
@@ -89,10 +120,23 @@ export default {
     } else {
       await this.zoomOrCenterUpdate(latLng(lat, lng), this.startingZoom);
     }
-    setTimeout(
-      () => this.$refs.leafletMap.mapObject.setView(this.currentCenterAndZoom.center, 16),
-      1250
-    );
+    setTimeout(() => {
+      this.$refs.leafletMap.mapObject.setView(this.currentCenterAndZoom.center, 16);
+      this.loading = false;
+    }, 1250);
+  },
+
+  mounted() {
+    // https://v2.vuejs.org/v2/guide/components-edge-cases.html#Programmatic-Event-Listeners
+    tracker.on(Tracker.EVS.positionUpdate, this.handlePositionUpdate);
+    tracker.on(Tracker.EVS.errorGettingPosition, this.handleErrorPosition);
+    tracker.start();
+
+    this.$once("hook:beforeDestroy", () => {
+      tracker.off(Tracker.EVS.positionUpdate, this.handlePositionUpdate);
+      tracker.off(Tracker.EVS.errorGettingPosition, this.handleErrorPosition);
+      tracker.stop();
+    });
   },
 
   methods: {
@@ -184,7 +228,37 @@ export default {
     },
     popupopen: function(latLngParada) {
       this.startingCenter = latLngParada;
+    },
+
+    goToUserPosition() {
+      if (!this.userPosition) {
+        alerts.fireToastError("Sua localização está desativada");
+        return;
+      }
+
+      this.startingCenter = latLng(this.userPosition.lat, this.userPosition.lng);
+    },
+
+    /** @param {GeolocationPosition} event */
+    handlePositionUpdate(event) {
+      console.debug("handlePositionUpdate", event);
+      this.userPosition = latLng(event.coords.latitude, event.coords.longitude);
+    },
+
+    /** @param {GeolocationPositionError} event */
+    handleErrorPosition(event) {
+      console.debug("handleErrorPosition", event);
+      // TODO: traduzir mensagem de erro
+      alerts.fireToastError("Erro ao obter sua posição", event.message);
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.v-btn--example {
+  // bottom: 0;
+  // position: absolute;
+  margin: 1rem;
+}
+</style>
