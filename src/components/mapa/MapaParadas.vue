@@ -16,7 +16,7 @@
           <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
           <CircleRaioParadas :circleCenter="circleCenter" />
           <GeoJsonAreaBH />
-          <MarkerParada :paradasMarker="paradasMarker" @popupopen="popupopen" />
+          <MarkerParadaList :paradasMarker="paradasMarker" @popupopen="popupopen" />
           <MarkerUserPosition v-if="!!userPosition" :userPositionLatLng="userPosition" />
         </l-map>
       </v-col>
@@ -49,7 +49,7 @@ import { LatLng, latLng } from "leaflet";
 import { LMap, LTileLayer } from "vue2-leaflet";
 
 import { getParadasProximas } from "../../services/onibusbh-api-gateway";
-import MarkerParada from "./MarkerParada.vue";
+import MarkerParadaList from "./MarkerParadaList.vue";
 import MarkerUserPosition from "./MarkerUserPosition.vue";
 import GeoJsonAreaBH from "./GeoJsonAreaBH.vue";
 import CircleRaioParadas from "./CircleRaioParadas.vue";
@@ -57,6 +57,7 @@ import * as geolocation from "./js/geolocation";
 import Tracker from "./js/Tracker";
 import alerts from "@/services/alerts";
 
+// TODO: refatorar e para de usar o Tracker, usar somente o window.navigator. Desinstalar o mitt nesse caso
 const tracker = new Tracker();
 
 export default {
@@ -65,7 +66,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    MarkerParada,
+    MarkerParadaList,
     GeoJsonAreaBH,
     CircleRaioParadas,
     MarkerUserPosition
@@ -143,8 +144,8 @@ export default {
     loadParadasProximas(center) {
       return new Promise(async (resolve, reject) => {
         try {
-          const apiRes = await getParadasProximas(center.lat, center.lng);
-          const paradas = apiRes.paradas.map(p => ({ ...p, latLng: latLng(p.y, p.x) }));
+          const { paradas } = await getParadasProximas(center.lat, center.lng);
+          // const paradas = apiRes.paradas.map(p => ({ ...p, latLng: latLng(p.y, p.x) }));
 
           // Cada parada é identificada pelo atributo 'cod'
           // Remove as paradas que nao estao na resposta da api

@@ -1,7 +1,11 @@
 <template>
   <l-popup>
-    <div>{{parada.desc}}</div>
-    <SheetPopupPrevissoesParada ref="sheetPopup" :paradaPrevisao="paradaPrevisaoTemp" />
+    <div>{{ parada.desc }}</div>
+    <SheetPopupPrevissoesParada
+      ref="sheetPopup"
+      :paradaPrevisao="paradaPrevisaoTemp"
+      :codParada="parada.cod"
+    />
   </l-popup>
 </template>
 
@@ -29,36 +33,35 @@ export default {
       sucesso: null,
       finished: null,
       previsoes: []
-    },
+    }
   }),
 
-  created: function () {
-    this.$parent.mapObject.on("popupopen", async (e) => {
-      await this.loadPrevisoesParada(this.parada.cod)
-      this.$parent.mapObject.openPopup()
-      this.$refs.sheetPopup.sheet = true
-      console.log('this', this)
-      this.$emit('popupopen', latLng(this.parada.y, this.parada.x))
-    })
-    this.$parent.mapObject.on("popupclose", (e) => {
+  created: function() {
+    this.$parent.mapObject.on("popupopen", async e => {
+      await this.loadPrevisoesParada(this.parada.cod);
+      this.$parent.mapObject.openPopup();
+      this.$refs.sheetPopup.sheet = true;
+      console.log("this", this);
+      this.$emit("popupopen", latLng(this.parada.y, this.parada.x));
+    });
+    this.$parent.mapObject.on("popupclose", e => {
       // this.$refs.sheetPopup.sheet = false
-    })
+    });
   },
 
   methods: {
-    loadPrevisoesParada: function (codParada) {
+    loadPrevisoesParada: function(codParada) {
       return new Promise(async (resolve, reject) => {
-        this.paradaPrevisaoTemp.previsoes.splice(0)
-        this.paradaPrevisaoTemp.finished = false
-        this.paradaPrevisaoTemp.sucesso = null
-        const apiRes = await getPrevisoesParada(codParada)
-        this.paradaPrevisaoTemp.previsoes.push(...apiRes.previsoes)
-        this.paradaPrevisaoTemp.finished = true
-        this.paradaPrevisaoTemp.sucesso = true
-        resolve()
-      })
+        this.paradaPrevisaoTemp.previsoes.splice(0);
+        this.paradaPrevisaoTemp.finished = false;
+        this.paradaPrevisaoTemp.sucesso = null;
+        const apiRes = await getPrevisoesParada(codParada);
+        this.paradaPrevisaoTemp.previsoes.push(...apiRes.previsoes);
+        this.paradaPrevisaoTemp.finished = true;
+        this.paradaPrevisaoTemp.sucesso = true;
+        resolve();
+      });
     }
   }
-
-}
+};
 </script>

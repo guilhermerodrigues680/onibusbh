@@ -9,7 +9,7 @@ export default {
   name: "GeoJsonAreaBH",
 
   components: {
-    LGeoJson,
+    LGeoJson
   },
 
   data: () => ({
@@ -24,15 +24,11 @@ export default {
     }
   }),
 
-  created: async function () {
-    const areaBHRes = await fetch('./geojson/area-belohorizonte.geojson')
-    const areaBH = await areaBHRes.json()
-    console.log(areaBH)
-    this.geojson = areaBH
+  async created() {
+    const areaBHRes = await fetch("/geojson/area-belohorizonte.geojson");
+    const areaBH = await areaBHRes.json();
+    console.log(areaBH);
+    this.geojson = areaBH;
   }
-}
+};
 </script>
-
-<style>
-
-</style>

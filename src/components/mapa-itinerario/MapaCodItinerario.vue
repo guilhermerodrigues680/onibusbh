@@ -11,15 +11,10 @@
           ref="leafletMap"
           style="z-index: 0;"
         >
-          <l-tile-layer
-            :url="url"
-            :attribution="attribution"
-          ></l-tile-layer>
-          <l-polyline
-            :lat-lngs="polyline.latlngs"
-            :color="polyline.color"
-          />
+          <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+          <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color" />
           <MarkerVeiculo :veiculos="veiculos" />
+          <MarkerParadaListItem v-if="parada" :parada="parada" />
           <GeoJsonAreaBH />
         </l-map>
       </v-col>
@@ -34,6 +29,7 @@ import { getVeiculosMapa } from "../../services/onibusbh-api-gateway";
 import { LMap, LTileLayer, LPolyline } from "vue2-leaflet";
 import GeoJsonAreaBH from "../mapa/GeoJsonAreaBH.vue";
 import MarkerVeiculo from "./MarkerVeiculo.vue";
+import MarkerParadaListItem from "@/components/mapa/MarkerParadaListItem.vue";
 
 export default {
   name: "MapaCodItinerario",
@@ -43,19 +39,24 @@ export default {
     LTileLayer,
     LPolyline,
     GeoJsonAreaBH,
-    MarkerVeiculo
+    MarkerVeiculo,
+    MarkerParadaListItem
   },
 
   props: {
     itinerarios: Array,
-    codItinerario: String
+    codItinerario: String,
+    parada: Object
   },
 
   data: () => ({
     startingZoom: 13,
     startingCenter: latLng(-19.9228, -43.9449),
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' : '.png'),
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    url:
+      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}" +
+      (L.Browser.retina ? "@2x.png" : ".png"),
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
     mapOptions: {
       zoomSnap: 0.5
     },
@@ -68,33 +69,32 @@ export default {
   }),
 
   watch: {
-    itinerarios: function (val) {
-      console.log(val, this.itinerarios)
-      const latlngsItinerarios = this.itinerarios.map(c => [ c.coordY, c.coordX ])
-      this.polyline.latlngs.splice(0)
-      latlngsItinerarios.forEach(latlng => this.polyline.latlngs.push(latlng))
+    itinerarios: function(val) {
+      console.log(val, this.itinerarios);
+      const latlngsItinerarios = this.itinerarios.map(c => [c.coordY, c.coordX]);
+      this.polyline.latlngs.splice(0);
+      latlngsItinerarios.forEach(latlng => this.polyline.latlngs.push(latlng));
     }
   },
 
-  created: async function () {
-    console.log(this)
-    await this.loadVeiculosMapa()
-    this.intervalUpdate = setInterval(() => this.loadVeiculosMapa(), 3000)
+  created: async function() {
+    console.log(this);
+    await this.loadVeiculosMapa();
+    this.intervalUpdate = setInterval(() => this.loadVeiculosMapa(), 3000);
   },
 
-  beforeDestroy: function () {
+  beforeDestroy: function() {
     if (this.intervalUpdate !== null) {
-      clearInterval(this.intervalUpdate)
+      clearInterval(this.intervalUpdate);
     }
   },
 
   methods: {
-    loadVeiculosMapa: async function () {
-      const apiResVeiculos = await getVeiculosMapa(this.codItinerario)
-      this.veiculos.splice(0)
-      apiResVeiculos.veiculos.forEach(v => this.veiculos.push(v))
+    loadVeiculosMapa: async function() {
+      const apiResVeiculos = await getVeiculosMapa(this.codItinerario);
+      this.veiculos.splice(0);
+      apiResVeiculos.veiculos.forEach(v => this.veiculos.push(v));
     }
   }
-
-}
+};
 </script>
