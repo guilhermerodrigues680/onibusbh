@@ -5,14 +5,14 @@
         <l-map
           class="fill-height"
           :zoom="startingZoom"
-          :center="startingCenter"
+          :center.sync="startingCenter"
           :options="mapOptions"
           :minZoom="11"
           ref="leafletMap"
           style="z-index: 0;"
         >
           <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-          <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color" />
+          <l-polyline :lat-lngs="polylineLatlngs" :color="polylineColor" />
           <MarkerVeiculo :veiculos="veiculos" />
           <MarkerParadaListItem v-if="parada" :parada="parada" />
           <GeoJsonAreaBH />
@@ -60,40 +60,45 @@ export default {
     mapOptions: {
       zoomSnap: 0.5
     },
-    polyline: {
-      latlngs: [],
-      color: "#4CAF50"
-    },
     veiculos: [],
-    intervalUpdate: null
+    polylineColor: "#4CAF50"
   }),
 
+  computed: {
+    polylineLatlngs() {
+      return this.itinerarios.map(c => [c.coordY, c.coordX]);
+    },
+    polylineCenter() {
+      console.debug("Calc polylineCenter");
+      return 0;
+    }
+  },
+
   watch: {
-    itinerarios: function(val) {
-      console.log(val, this.itinerarios);
-      const latlngsItinerarios = this.itinerarios.map(c => [c.coordY, c.coordX]);
-      this.polyline.latlngs.splice(0);
-      latlngsItinerarios.forEach(latlng => this.polyline.latlngs.push(latlng));
+    itinerarios(val) {
+      if (!val.length) {
+        return;
+      }
+
+      // Para calcular o ponto central, basta achar a media das coordenadas
+      const sumCoordsY = val.reduce((acumulador, coord) => acumulador + coord.coordY, 0);
+      const sumCoordsX = val.reduce((acumulador, coord) => acumulador + coord.coordX, 0);
+      const pCenterY = sumCoordsY / val.length;
+      const pCenterX = sumCoordsX / val.length;
+      this.startingCenter = latLng(pCenterY, pCenterX);
     }
   },
 
-  created: async function() {
-    console.log(this);
-    await this.loadVeiculosMapa();
-    this.intervalUpdate = setInterval(() => this.loadVeiculosMapa(), 3000);
-  },
-
-  beforeDestroy: function() {
-    if (this.intervalUpdate !== null) {
-      clearInterval(this.intervalUpdate);
-    }
+  created() {
+    this.loadVeiculosMapa();
+    const intervalUpdate = setInterval(() => this.loadVeiculosMapa(), 3000);
+    this.$once("hook:beforeDestroy", () => clearInterval(intervalUpdate));
   },
 
   methods: {
-    loadVeiculosMapa: async function() {
-      const apiResVeiculos = await getVeiculosMapa(this.codItinerario);
-      this.veiculos.splice(0);
-      apiResVeiculos.veiculos.forEach(v => this.veiculos.push(v));
+    async loadVeiculosMapa() {
+      const { veiculos } = await getVeiculosMapa(this.codItinerario);
+      this.$set(this.$data, "veiculos", veiculos);
     }
   }
 };
