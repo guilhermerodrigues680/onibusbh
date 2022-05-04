@@ -12,7 +12,8 @@
           style="z-index: 0;"
         >
           <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-          <l-polyline :lat-lngs="polylineLatlngs" :color="polylineColor" />
+          <l-polyline :lat-lngs="polylineLatlngsStart" :color="polylineColorStart" />
+          <l-polyline :lat-lngs="polylineLatlngsEnd" :color="polylineColorEnd" />
           <MarkerVeiculo :veiculos="veiculos" />
           <MarkerParadaListItem v-if="parada" :parada="parada" />
           <MarkerInicioItinerario :coords="startCoordItinerario" />
@@ -67,12 +68,18 @@ export default {
       zoomSnap: 0.5
     },
     veiculos: [],
-    polylineColor: "#4CAF50"
+    polylineColorStart: "#4CAF50",
+    polylineColorEnd: "#41576e"
   }),
 
   computed: {
-    polylineLatlngs() {
-      return this.itinerarios.map(c => [c.coordY, c.coordX]);
+    polylineLatlngsStart() {
+      const minLatLngIdx = this.calculaPontoProximoAoPonto();
+      return this.itinerarios.slice(0, minLatLngIdx + 1).map(c => [c.coordY, c.coordX]);
+    },
+    polylineLatlngsEnd() {
+      const minLatLngIdx = this.calculaPontoProximoAoPonto();
+      return this.itinerarios.slice(minLatLngIdx).map(c => [c.coordY, c.coordX]);
     },
     startCoordItinerario() {
       const coord = this.itinerarios[0];
@@ -109,6 +116,39 @@ export default {
     async loadVeiculosMapa() {
       const { veiculos } = await getVeiculosMapa(this.codItinerario);
       this.$set(this.$data, "veiculos", veiculos);
+    },
+
+    calculaPontoProximoAoPonto() {
+      // TODO: Refatorar esse metodo
+      if (!this.parada) {
+        return;
+      }
+
+      // Para achar qual é a coordenada mais próxima do ponto,
+      // inicia-se interando sobre o itinerário até achar o menor index e a menor distância
+      const paradaLatLng = latLng(this.parada.y, this.parada.x);
+
+      /** @type {import("leaflet").LatLng} */
+      let minLatLng = null;
+      let minLatLngIdx = -1;
+      for (const [idx, coord] of this.itinerarios.entries()) {
+        const { coordY: lat, coordX: long } = coord;
+        const coordLatLng = latLng(lat, long);
+        if (!minLatLng) {
+          minLatLng = coordLatLng;
+          minLatLngIdx = idx;
+          continue;
+        }
+
+        const dMinCoord = paradaLatLng.distanceTo(minLatLng);
+        const dCoord = paradaLatLng.distanceTo(coordLatLng);
+        if (dCoord <= dMinCoord) {
+          minLatLng = coordLatLng;
+          minLatLngIdx = idx;
+        }
+      }
+
+      return minLatLngIdx;
     }
   }
 };
