@@ -15,6 +15,8 @@
           <l-polyline :lat-lngs="polylineLatlngs" :color="polylineColor" />
           <MarkerVeiculo :veiculos="veiculos" />
           <MarkerParadaListItem v-if="parada" :parada="parada" />
+          <MarkerInicioItinerario :coords="startCoordItinerario" />
+          <MarkerFimItinerario :coords="endCoordItinerario" />
           <GeoJsonAreaBH />
         </l-map>
       </v-col>
@@ -30,6 +32,8 @@ import { LMap, LTileLayer, LPolyline } from "vue2-leaflet";
 import GeoJsonAreaBH from "../mapa/GeoJsonAreaBH.vue";
 import MarkerVeiculo from "./MarkerVeiculo.vue";
 import MarkerParadaListItem from "@/components/mapa/MarkerParadaListItem.vue";
+import MarkerInicioItinerario from "@/components/mapa-itinerario/MarkerInicioItinerario.vue";
+import MarkerFimItinerario from "@/components/mapa-itinerario/MarkerFimItinerario.vue";
 
 export default {
   name: "MapaCodItinerario",
@@ -40,7 +44,9 @@ export default {
     LPolyline,
     GeoJsonAreaBH,
     MarkerVeiculo,
-    MarkerParadaListItem
+    MarkerParadaListItem,
+    MarkerInicioItinerario,
+    MarkerFimItinerario
   },
 
   props: {
@@ -68,9 +74,13 @@ export default {
     polylineLatlngs() {
       return this.itinerarios.map(c => [c.coordY, c.coordX]);
     },
-    polylineCenter() {
-      console.debug("Calc polylineCenter");
-      return 0;
+    startCoordItinerario() {
+      const coord = this.itinerarios[0];
+      return { lat: coord.coordY, long: coord.coordX };
+    },
+    endCoordItinerario() {
+      const coord = this.itinerarios[this.itinerarios.length - 1];
+      return { lat: coord.coordY, long: coord.coordX };
     }
   },
 
