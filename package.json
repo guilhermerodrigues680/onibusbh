@@ -21,6 +21,7 @@
     "axios": "^0.26.1",
     "core-js": "^3.6.5",
     "leaflet": "^1.7.1",
+    "leaflet-geometryutil": "^0.10.1",
     "mitt": "^3.0.0",
     "roboto-fontface": "*",
     "sweetalert2": "^11.4.10",
