@@ -1,11 +1,5 @@
 <template>
-  <l-circle
-    :lat-lng="circleCenter"
-    :radius="500"
-    color="#3F51B5"
-    :fill="false"
-    :opacity="0.65"
-  />
+  <l-circle :lat-lng="circleCenter" :radius="500" color="#3F51B5" :fill="false" :opacity="0.65" />
 </template>
 
 <script>
@@ -15,16 +9,11 @@ export default {
   name: "CircleRaioParadas",
 
   components: {
-    LCircle,
+    LCircle
   },
 
   props: {
-    circleCenter: Array
+    circleCenter: Object
   }
-
-}
+};
 </script>
-
-<style>
-
-</style>

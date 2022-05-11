@@ -1,5 +1,4 @@
 import mitt from "mitt";
-import * as geolocHelper from "./geolocation";
 
 class Tracker {
   //
@@ -15,6 +14,10 @@ class Tracker {
     return this._EVENT_NAMES;
   }
 
+  static get HAS_GEOLOCATION() {
+    return !!navigator.geolocation;
+  }
+
   //
   // instance
   //
@@ -22,6 +25,10 @@ class Tracker {
   _emitter;
   /** @type {number|null} */
   _watchPositionNumber = null;
+  _lastUserPosition = {
+    lat: null,
+    lng: null
+  };
 
   constructor() {
     this._emitter = mitt();
@@ -51,6 +58,8 @@ class Tracker {
     this._watchPositionNumber = window.navigator.geolocation.watchPosition(
       positionCallback => {
         console.debug("positionCallback", positionCallback);
+        this._lastUserPosition.lat = positionCallback.coords.latitude;
+        this._lastUserPosition.lng = positionCallback.coords.longitude;
         this._emitter.emit(Tracker.EVS.positionUpdate, positionCallback);
       },
       positionErrorCallback => {
@@ -69,6 +78,24 @@ class Tracker {
 
     window.navigator.geolocation.clearWatch(this._watchPositionNumber);
     console.debug("Tracker.stop() ok!");
+  }
+
+  getCurrentPosition() {
+    if (this._watchPositionNumber !== null) {
+      return { ...this._lastUserPosition };
+    }
+
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        positionCallback => {
+          this._lastUserPosition.lat = positionCallback.coords.latitude;
+          this._lastUserPosition.lng = positionCallback.coords.longitude;
+          resolve({ ...this._lastUserPosition });
+        },
+        reject,
+        options
+      );
+    });
   }
 
   destroy() {

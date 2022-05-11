@@ -13,6 +13,8 @@ const getPrevisoesParada = cod =>
 const getItinerario = cod => handleRequest(apiInstance.get(`${ROUTE}/itinerarios/${cod}`));
 const getVeiculosMapa = cod =>
   handleRequest(apiInstance.get(`${ROUTE}/itinerarios/${cod}/veiculos-tempo-real`));
+const getVeiculosProximos = (lat, lng) =>
+  handleRequest(apiInstance.get(`${ROUTE}/veiculos-proximos-tempo-real`, { params: { lat, lng } }));
 
 export {
   getLinhas,
@@ -21,5 +23,6 @@ export {
   getPrevisoesParada,
   getParadasPorLinha,
   getItinerario,
-  getVeiculosMapa
+  getVeiculosMapa,
+  getVeiculosProximos
 };

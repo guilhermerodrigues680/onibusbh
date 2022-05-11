@@ -5,5 +5,6 @@ export {
   getPrevisoesParada,
   getParadasPorLinha,
   getItinerario,
-  getVeiculosMapa
+  getVeiculosMapa,
+  getVeiculosProximos
 } from "./routes";
