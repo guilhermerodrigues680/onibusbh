@@ -47,7 +47,7 @@ async function getVeiculosProximos(lat, lng) {
   // TODO: Parametrizar MIN_NUM_NEARBY_VEHICLES
   const MIN_NUM_NEARBY_VEHICLES = 10; // default: 10
   // TODO: Parametrizar MAX_DISTANCE
-  const MAX_DISTANCE = 5; // distancia em km, default: 3
+  const MAX_DISTANCE = 3; // distancia em km, default: 3
 
   const batchSize = 2;
   while (proms.length && nearbyVehicles.size < MIN_NUM_NEARBY_VEHICLES) {
